@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Objects;
 
 public class Log {
-    private static Logger loggerInstance; //Logger -
+    private static Logger loggerInstance;
 
     private static Logger getLogger() {
         if (Objects.isNull(loggerInstance)) {
