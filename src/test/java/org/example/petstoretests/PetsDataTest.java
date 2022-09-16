@@ -16,21 +16,13 @@ public class PetsDataTest {
 
     @Test
     public void addPetTest() {
-        Random random = new Random();
-
-        Pet addingPet = new Pet()
-                .setId(random.nextInt())
-                .setCategory(new Category())
-                .setName("Laika")
-                .setPhotoUrls(new ArrayList<>())
-                .setTags(new ArrayList<>())
-                .setStatus("available");
+        Pet petToAdd = createPet("Laika");
 
         Pet addedPet = REQUEST_SERVICE
-                .postRequest("pet", addingPet)
+                .postRequest("pet", petToAdd)
                 .as(Pet.class);
 
-        Assert.assertEquals(addingPet.getName(), addedPet.getName(), "Name of added pet is wrong");
+        Assert.assertEquals(petToAdd.getName(), addedPet.getName(), "Name of added pet is wrong");
     }
 
     @Test
@@ -51,5 +43,17 @@ public class PetsDataTest {
                         .getStatusCode(),
                 HttpStatus.SC_NOT_FOUND,
                 "It's strange, but we find pet with this random number");
+    }
+
+    private Pet createPet(String petName) {
+        Random random = new Random();
+
+        return new Pet()
+                .setId(random.nextInt(Integer.MAX_VALUE))
+                .setCategory(new Category())
+                .setName(petName)
+                .setPhotoUrls(new ArrayList<>())
+                .setTags(new ArrayList<>())
+                .setStatus("available");
     }
 }

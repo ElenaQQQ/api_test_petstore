@@ -15,10 +15,8 @@ public class ApiRequestService {
 
     private final Function<String, String> prepareUri = uri -> String.format("%s%s", BASE_URI, uri);
 
-    protected RequestSpecification requestSpecification;
-
     public static ApiRequestService getInstance() {
-        if (instance == null) {
+        if(instance == null) {
             instance = new ApiRequestService();
         }
 
@@ -27,17 +25,14 @@ public class ApiRequestService {
 
     protected ApiRequestService() {
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
-        this.requestSpecification = RestAssured
-                .given()
-                .accept(ContentType.JSON)
-                .contentType(ContentType.JSON);
     }
 
     public Response getSuccessRequest(String uri) {
         Log.info("Sending Get request to the URL " + uri);
 
-        Response response = requestSpecification
-                .expect().statusCode(HttpStatus.SC_OK)
+        Response response = getRequestSpecification()
+                .expect()
+                .statusCode(HttpStatus.SC_OK)
                 .log().ifError()
                 .when().get(prepareUri.apply(uri));
 
@@ -49,7 +44,7 @@ public class ApiRequestService {
     public Response getRequest(String uri) {
         Log.info("Sending Get request to the URL " + uri);
 
-        Response response = requestSpecification
+        Response response = getRequestSpecification()
                 .expect()
                 .log().ifError()
                 .when().get(prepareUri.apply(uri));
@@ -62,7 +57,7 @@ public class ApiRequestService {
     public Response postRequest(String uri, Object body) {
         Log.info("Sending Get request to the URL " + uri);
 
-        Response response = requestSpecification
+        Response response = getRequestSpecification()
                 .body(body)
                 .expect().statusCode(HttpStatus.SC_OK)
                 .log().ifError()
@@ -72,5 +67,12 @@ public class ApiRequestService {
         Log.info("Response body is " + response.asPrettyString());
 
         return response;
+    }
+
+    private RequestSpecification getRequestSpecification() {
+        return RestAssured
+                .given()
+                .accept(ContentType.JSON)
+                .contentType(ContentType.JSON);
     }
 }

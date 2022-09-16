@@ -14,33 +14,39 @@ public class UserDataTest {
 
     @Test
     public void addUsersAsArrayTest() {
-        Random random = new Random();
-        ArrayList<String> listOfRandomId = new ArrayList<>();
-
-        ArrayList<User> usersListToAdd = new ArrayList<>();
-
-        for (int j = 0; j < 5; j++) {
-            int randomId = random.nextInt();
-            usersListToAdd.add(new User(randomId,
-                    "name" + randomId,
-                    "name" + randomId,
-                    "name" + randomId,
-                    "name" + randomId + "@gmail.com",
-                    "123",
-                    j + 1));
-            listOfRandomId.add("name" + randomId);
-        }
+        ArrayList<User> usersListToAdd = createRandomUsers(5);
 
         REQUEST_SERVICE
                 .postRequest("user/createWithList", usersListToAdd);
 
         //Check if all users are added
-        listOfRandomId.forEach(item ->
+        usersListToAdd.forEach(user ->
                 Assert.assertEquals(
                         REQUEST_SERVICE
-                                .getRequest("user/" + item)
+                                .getRequest("user/" + user.getUsername())
                                 .getStatusCode(),
                         HttpStatus.SC_OK,
-                        "Some of added users are not found"));
+                        String.format("Created user '%s' was not found", user.getUsername())));
+    }
+
+    private ArrayList<User> createRandomUsers(int count) {
+        ArrayList<User> users = new ArrayList<>(count);
+        for (int i = 0; i < count; i++) {
+            users.add(createRandomUser());
+        }
+
+        return users;
+    }
+
+    private User createRandomUser() {
+        Random random = new Random();
+        int randomId = random.nextInt(Integer.MAX_VALUE);
+        return new User(randomId,
+                "name" + randomId,
+                "name" + randomId,
+                "name" + randomId,
+                "name" + randomId + "@gmail.com",
+                "123",
+                1);
     }
 }
